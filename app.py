@@ -23,7 +23,7 @@ def webhook():
 
 def order(data):
     response = {
-        'fulfillmentText': "anak anjing"
+        'fulfillmentText': "Ini Balasan dari Webhook"
     }
 
     return jsonify(response)
