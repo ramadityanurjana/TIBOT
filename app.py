@@ -1,7 +1,6 @@
 # import flask dependencies
 from flask import Flask, request, jsonify
 import os
-import sys
 import pymysql.cursors
 import json
 from datetime import date
