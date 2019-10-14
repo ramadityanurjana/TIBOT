@@ -16,12 +16,12 @@ def webhook():
     intent_name = data.get("queryResult").get("intent").get("displayName")
     print(data)
 
-    if intent_name == 'webhook-intent':
-        return Webhook(data)
+    if intent_name == "order":
+        return order(data)
 
-    return jsonify(data)
+    return jsonify(request.get_json())
 
-def Webhook(data):
+def order(data):
     pesan = data.get("queryResult").get("queryText")
 
     response = {
