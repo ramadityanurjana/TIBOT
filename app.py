@@ -25,7 +25,7 @@ def Webhook(data):
     pesan = data.get("queryResult").get("queryText")
 
     response = {
-        'fulfillmentText': pesan
+        'fulfillmentText': "anak anjing"
     }
 
     return jsonify(response)
