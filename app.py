@@ -22,7 +22,7 @@ def webhook():
     return jsonify(request.get_json())
 
 def order(data):
-    pesan = data.get("queryResult").get("queryText")
+
 
     response = {
         'fulfillmentText': "anak anjing"
