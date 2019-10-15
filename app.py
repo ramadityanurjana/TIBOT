@@ -13,15 +13,15 @@ PORT = int(os.environ.get("PORT", 5000))
 @app.route('/', methods=['POST'])
 def webhook():
     data = request.get_json()
-    pesan = data['queryResult']['queryText']
+    inbox = data['queryResult']['queryText']
     intent_name = data.get("queryResult").get("intent").get("displayName")
     print(data)
     connection = pymysql.connect(host='db4free.net', user='ramaditya', password='osesehat019', db='tibotdb',
                                  cursorclass=pymysql.cursors.DictCursor)
     try:
         with connection.cursor() as cursor:
-            sql = "INSERT INTO tb_inbox(pesan,date) VALUES (%s,%s)"
-            cursor.execute(sql, (date.today().strftime("%Y-%m-%d"), pesan))
+            sql = "INSERT INTO tb_inbox (pesan, date) VALUES (%s, %s)"
+            cursor.execute(sql, (inbox, date.today().strftime("%Y-%m-%d")))
         connection.commit()
     finally:
         connection.close()
