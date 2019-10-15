@@ -9,6 +9,7 @@ from datetime import date
 app = Flask(__name__)
 PORT = int(os.environ.get("PORT", 5000))
 
+
 # create a route for webhook
 @app.route('/', methods=['POST'])
 def webhook():
@@ -29,7 +30,8 @@ def webhook():
     if intent_name == "order":
         return order(data)
 
-    return jsonify(request.get_json())
+    # return jsonify(request.get_json())
+
 
 def order(data):
     response = {
@@ -38,6 +40,7 @@ def order(data):
 
     return jsonify(response)
 
+
 # run the app
 if __name__ == '__main__':
-   app.run(port=PORT, host='0.0.0.0')
+    app.run(port=PORT, host='0.0.0.0')
