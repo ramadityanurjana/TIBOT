@@ -19,16 +19,15 @@ def webhook():
     print(data)
     connection = pymysql.connect(host='db4free.net', user='ramaditya', password='osesehat019', db='tibotdb',
                                  cursorclass=pymysql.cursors.DictCursor)
-
     if intent_name == "order":
         return order(data)
     try:
         with connection.cursor() as cursor:
             sql = "INSERT INTO tb_inbox (pesan, date) VALUES (%s, %s)"
-            cursor.execute(sql, (inbox, date.today().strftime("%Y-%m-%d"),))
-            # idterakhir = cursor.lastrowid
-            # sql = "INSERT INTO tb_outbox (id_inbox, pesan, date) VALUES (%s, %s, %s)"
-            # cursor.execute(sql, (idterakhir, order(data), date.today().strftime("%Y-%m-%d")))
+            cursor.execute(sql, (inbox, date.today().strftime("%Y-%m-%d")))
+            idterakhir = cursor.lastrowid
+            sql = "INSERT INTO tb_outbox (id_inbox, pesan, date) VALUES (%s, %s, %s)"
+            cursor.execute(sql, (idterakhir, order(data), date.today().strftime("%Y-%m-%d")))
         connection.commit()
     finally:
         connection.close()
