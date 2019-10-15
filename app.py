@@ -19,6 +19,8 @@ def webhook():
     print(data)
     connection = pymysql.connect(host='db4free.net', user='ramaditya', password='osesehat019', db='tibotdb',
                                  cursorclass=pymysql.cursors.DictCursor)
+    if intent_name == "order":
+        return order(data)
     try:
         with connection.cursor() as cursor:
             sql = "INSERT INTO tb_inbox (pesan, date) VALUES (%s, %s)"
@@ -26,10 +28,6 @@ def webhook():
         connection.commit()
     finally:
         connection.close()
-
-    if intent_name == "order":
-        return order(data)
-
     # return jsonify(request.get_json())
 
 
