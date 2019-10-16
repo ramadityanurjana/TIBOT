@@ -24,17 +24,18 @@ def webhook():
 
 
 def order(data):
+    id_user = data["originalDetectIntentRequest"]["payload"]["from"]["id"]
+    id_pesan = data["originalDetectIntentRequest"]["payload"]["message_id"]
     pesan = data['queryResult']['queryText']
     text = ""
 
     try:
         with connection.cursor() as cursor:
-            sql = "INSERT INTO tb_inbox (pesan, date) VALUES (%s, %s)"
-            cursor.execute(sql, (pesan, date.today().strftime("%Y-%m-%d")))
+            sql = "INSERT INTO tb_inbox (id_pesan, pesan, tanggal, user_id, status) VALUES (%s, %s, %s, %s, %s)"
+            cursor.execute(sql, (id_pesan, pesan, date.today().strftime("%Y-%m-%d"), id_user, '0'))
             idterakhir = cursor.lastrowid
             sql = "INSERT INTO tb_outbox (id_inbox, pesan, date) VALUES (%s, %s, %s)"
             cursor.execute(sql, (idterakhir, pesan, date.today().strftime("%Y-%m-%d")))
-
         connection.commit()
         text = "Berhasil"
     except Exception as error:
