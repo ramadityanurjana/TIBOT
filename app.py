@@ -260,9 +260,9 @@ def daftar_panitia(data):
         text = "Terima kasih telah mendaftar di kegiatan {}".format(kegiatan)
 
         with connection.cursor() as cursor:
-            sql = "SELECT * FROM tb_kegiatan WHERE tb_kegiatan.nama_kegiatan = %s"
+            sql = "SELECT * FROM tb_kegiatan WHERE tb_kegiatan.nama_kegiatan LIKE %s"
             cursor.execute(sql, (kegiatan))
-            id_kegiatan = cursor.fetchone()
+            id_kegiatan = cursor.fetchone()['id']
 
         with connection.cursor() as cursor:
             sql = "INSERT INTO tb_inbox (id_pesan, pesan, tanggal, user_id, status) VALUES (%s, %s, %s, %s, %s)"
