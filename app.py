@@ -35,6 +35,8 @@ def list_kepanitiaan(data):
             sql = "SELECT * FROM tb_kegiatan"
             cursor.execute(sql)
             result = cursor.fetchall()
+
+        print(result)
     except Exception as error:
         print(error)
 
