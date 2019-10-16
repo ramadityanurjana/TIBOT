@@ -243,11 +243,10 @@ def daftar_sie(data):
 
 
 def daftar_panitia(data):
-    print(data)
     id_user = data["originalDetectIntentRequest"]["payload"]["from"]["id"]
     id_pesan = data["originalDetectIntentRequest"]["payload"]["message_id"]
     pesan = data['queryResult']['queryText']
-    parameters = data['queryResult']['outputContexts'][0]['parameters']
+    parameters = data['queryResult']['outputContexts'][1]['parameters']
     kegiatan = parameters['kegiatan']
     nama = parameters['nama']
     nim = parameters['nim']
