@@ -21,6 +21,7 @@ def webhook():
                                  cursorclass=pymysql.cursors.DictCursor)
     if intent_name == "order":
         return order(data)
+
     try:
         with connection.cursor() as cursor:
             sql = "INSERT INTO tb_inbox (pesan, date) VALUES (%s, %s)"
