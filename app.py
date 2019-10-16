@@ -8,38 +8,44 @@ from datetime import date
 # initialize the flask app
 app = Flask(__name__)
 PORT = int(os.environ.get("PORT", 5000))
-
+connection = pymysql.connect(host='db4free.net', user='ramaditya', password='osesehat019', db='tibotdb',
+                             cursorclass=pymysql.cursors.DictCursor)
 
 # create a route for webhook
 @app.route('/', methods=['POST'])
 def webhook():
     data = request.get_json()
-    inbox = data['queryResult']['queryText']
     intent_name = data.get("queryResult").get("intent").get("displayName")
-    print(data)
-    connection = pymysql.connect(host='db4free.net', user='ramaditya', password='osesehat019', db='tibotdb',
-                                 cursorclass=pymysql.cursors.DictCursor)
+
     if intent_name == "order":
         return order(data)
+
+    return jsonify(request.get_json())
+
+
+def order(data):
+    pesan = data['queryResult']['queryText']
+    text = ""
 
     try:
         with connection.cursor() as cursor:
             sql = "INSERT INTO tb_inbox (pesan, date) VALUES (%s, %s)"
-            cursor.execute(sql, (inbox, date.today().strftime("%Y-%m-%d")))
+            cursor.execute(sql, (pesan, date.today().strftime("%Y-%m-%d")))
             idterakhir = cursor.lastrowid
             sql = "INSERT INTO tb_outbox (id_inbox, pesan, date) VALUES (%s, %s, %s)"
-            cursor.execute(sql, (idterakhir, order(data), date.today().strftime("%Y-%m-%d")))
+            cursor.execute(sql, (idterakhir, pesan, date.today().strftime("%Y-%m-%d")))
+
         connection.commit()
-    finally:
-        connection.close()
-    # return jsonify(request.get_json())
+        text = "Berhasil"
+    except Exception as error:
+        text = "Terjadi kesalahan, silahkan coba lagi"
 
-
-def order(data):
     response = {
-        'fulfillmentText': "Ini Balasan dari Webhook"
+        'fulfillmentText': text
     }
+
     return jsonify(response)
+
 
 # run the app
 if __name__ == '__main__':
