@@ -30,25 +30,49 @@ def list_kepanitiaan(data):
 
     try:
         result = None
+        id_terakhir = None
 
         with connection.cursor() as cursor:
             sql = "SELECT * FROM tb_kegiatan"
             cursor.execute(sql)
             result = cursor.fetchall()
 
-        print(result)
+        with connection.cursor() as cursor:
+            sql = "INSERT INTO tb_inbox (id_pesan, pesan, tanggal, user_id, status) VALUES (%s, %s, %s, %s, %s)"
+            cursor.execute(sql, (id_pesan, pesan, date.today().strftime("%Y-%m-%d"), id_user, '0'))
+            id_terakhir = cursor.lastrowid
+
+        connection.commit()
+
+        with connection.cursor() as cursor:
+            for kegiatan in result:
+                sql = "INSERT INTO tb_outbox (id_inbox, pesan, date) VALUES (%s, %s, %s)"
+                cursor.execute(sql, (id_terakhir, kegiatan["id"], date.today().strftime("%Y-%m-%d")))
+
+            sql = "UPDATE tb_inbox SET tb_inbox.status = '1' WHERE tb_inbox.id = %s"
+            cursor.execute(sql, (id_terakhir))
+
+        connection.commit()
+
+        respon = {
+            "fulfillmentMessages": [
+                {
+                    "card": {
+                        "title": kegiatan["nama_kegiatan"],
+                        "subtitle": kegiatan["status"]
+                    }
+                }
+                for kegiatan in result
+            ]
+        }
+
+        return jsonify(respon)
+
     except Exception as error:
         print(error)
+        respon = {"fulfillmentText": "Mohon maaf, terjadi kesalahan"}
+        return jsonify(respon)
 
-
-        # with connection.cursor() as cursor:
-        #     sql = "INSERT INTO tb_inbox (id_pesan, pesan, tanggal, user_id, status) VALUES (%s, %s, %s, %s, %s)"
-        #     cursor.execute(sql, (id_pesan, pesan, date.today().strftime("%Y-%m-%d"), id_user, '0'))
-        #     idterakhir = cursor.lastrowid
-        #     sql = "INSERT INTO tb_outbox (id_inbox, pesan, date) VALUES (%s, %s, %s)"
-        #     cursor.execute(sql, (idterakhir, pesan, date.today().strftime("%Y-%m-%d")))
-        #
-        # connection.commit()
 
 def order(data):
     id_user = data["originalDetectIntentRequest"]["payload"]["from"]["id"]
