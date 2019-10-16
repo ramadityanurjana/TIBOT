@@ -24,8 +24,29 @@ def webhook():
 
 
 def list_kepanitiaan(data):
-    print(data)
+    id_user = data["originalDetectIntentRequest"]["payload"]["callback_query"]["from"]["id"]
+    id_pesan = data["originalDetectIntentRequest"]["payload"]["callback_query"]["message"]["message_id"]
+    pesan = data['queryResult']['queryText']
 
+    try:
+        result = None
+
+        with connection.cursor() as cursor:
+            sql = "SELECT * FROM tb_kegiatan"
+            cursor.execute(sql)
+            result = cursor.fetchall()
+    except Exception as error:
+        print(error)
+
+
+        # with connection.cursor() as cursor:
+        #     sql = "INSERT INTO tb_inbox (id_pesan, pesan, tanggal, user_id, status) VALUES (%s, %s, %s, %s, %s)"
+        #     cursor.execute(sql, (id_pesan, pesan, date.today().strftime("%Y-%m-%d"), id_user, '0'))
+        #     idterakhir = cursor.lastrowid
+        #     sql = "INSERT INTO tb_outbox (id_inbox, pesan, date) VALUES (%s, %s, %s)"
+        #     cursor.execute(sql, (idterakhir, pesan, date.today().strftime("%Y-%m-%d")))
+        #
+        # connection.commit()
 
 def order(data):
     id_user = data["originalDetectIntentRequest"]["payload"]["from"]["id"]
