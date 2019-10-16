@@ -19,6 +19,8 @@ def webhook():
 
     if intent_name == "list-kepanitiaan":
         return list_kepanitiaan(data)
+    elif intent_name == "daftar-alasan":
+        return daftar_panitia(data)
 
     return jsonify(request.get_json())
 
@@ -72,6 +74,10 @@ def list_kepanitiaan(data):
         print(error)
         respon = {"fulfillmentText": "Mohon maaf, terjadi kesalahan"}
         return jsonify(respon)
+
+
+def daftar_panitia(data):
+    print(data)
 
 
 def order(data):
