@@ -17,10 +17,14 @@ def webhook():
     data = request.get_json()
     intent_name = data.get("queryResult").get("intent").get("displayName")
 
-    if intent_name == "order":
-        return order(data)
+    if intent_name == "list-kepanitiaan":
+        return list_kepanitiaan(data)
 
     return jsonify(request.get_json())
+
+
+def list_kepanitiaan(data):
+    print(data)
 
 
 def order(data):
