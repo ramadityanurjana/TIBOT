@@ -1,45 +1,56 @@
-# import flask dependencies
 from flask import Flask, request, jsonify
 import os
 import pymysql.cursors
-import json
 from datetime import date
+import json
 
-# initialize the flask app
 app = Flask(__name__)
 PORT = int(os.environ.get("PORT", 5000))
 
+connection = pymysql.connect(host='db4free.net',
+                             user='ramaditta',
+                             password='osesehat019',
+                             db='tibotdb',
+                             charset='utf8mb4',
+                             cursorclass=pymysql.cursors.DictCursor)
 
-# create a route for webhook
+
 @app.route('/', methods=['POST'])
 def webhook():
     data = request.get_json()
-    inbox = data['queryResult']['queryText']
     intent_name = data.get("queryResult").get("intent").get("displayName")
     print(data)
-    connection = pymysql.connect(host='db4free.net', user='ramaditya', password='osesehat019', db='tibotdb',
-                                 cursorclass=pymysql.cursors.DictCursor)
-    if intent_name == "order":
-        return order(data)
+
+    if intent_name == 'order':
+        return Order(data)
+    # elif intent_name == 'Awalcustom':
+    #     return AwalCustom(data)
+
+    return jsonify(request.get_json())
+
+def Order(data):
+    id_pesan = data.get("originalDetectIntentRequest").get("payload").get("data").get("message").get("id")
+    pesan = data.get("originalDetectIntentRequest").get("payload").get("data").get("message").get("text")
+    id_inbox = ""
 
     try:
+        result = ""
         with connection.cursor() as cursor:
-            sql = "INSERT INTO tb_inbox (pesan, date) VALUES (%s, %s)"
-            cursor.execute(sql, (inbox, date.today().strftime("%Y-%m-%d")))
-            # idterakhir = cursor.lastrowid
-            # sql = "INSERT INTO tb_outbox (id_inbox, pesan, date) VALUES (%s, %s, %s)"
-            # cursor.execute(sql, (idterakhir, order(data), date.today().strftime("%Y-%m-%d")))
+            sql = "INSERT INTO tb_inbox (id_pesan, pesan, userID, tanggal) VALUES (%s, %s, %s, %s)"
+            cursor.execute(sql, (id_pesan, pesan, date.today().strftime("%Y-%m-%d")))
+            # id_inbox = cursor.lastrowid
         connection.commit()
-    finally:
-        connection.close()
-    # return jsonify(request.get_json())
 
+        response = {
+            'fulfillmentText': "Ini Respon dari Webhook"
+        }
+        return response
 
-def order(data):
-    response = {
-        'fulfillmentText': "Ini Balasan dari Webhook"
-    }
-    return jsonify(response)
+    except Exception:
+        response = {
+            'fulfillmentText': "Data anda gagal di Daftarkan"
+        }
+        return jsonify(response)
 
 # run the app
 if __name__ == '__main__':
