@@ -38,6 +38,7 @@ def order(data):
         connection.commit()
         text = "Berhasil"
     except Exception as error:
+        print(error)
         text = "Terjadi kesalahan, silahkan coba lagi"
 
     response = {
